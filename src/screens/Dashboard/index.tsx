@@ -1,3 +1,6 @@
+import { View } from "react-native";
+import { BorderlessButton } from "react-native-gesture-handler";
+
 import { HighlightCard } from "../../components/HighlightCard";
 import { TransactionCard } from "../../components/TransactionCard";
 
@@ -91,7 +94,17 @@ export function Dashboard() {
             </User>
           </UserInfo>
 
-          <Icon name="power" />
+          <BorderlessButton onPress={() => {}}>
+            <View
+              accessibilityRole="button"
+              style={{
+                borderRadius: 99999,
+                padding: 4,
+              }}
+            >
+              <Icon name="power" />
+            </View>
+          </BorderlessButton>
         </UserWrapper>
       </Header>
 

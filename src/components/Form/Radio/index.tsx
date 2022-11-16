@@ -1,17 +1,33 @@
-import { TouchableOpacityProps } from "react-native";
+import { RectButtonProps } from "react-native-gesture-handler";
 import { useRadioProps } from "../../../contexts/RadioGroup";
 
-import { Container, Icon, Label } from "./styles";
+import { Container, Button, Icon, Label } from "./styles";
 
-interface RadioProps extends TouchableOpacityProps {
+interface RadioProps extends RectButtonProps {
   value: string;
   activeBackgroundColor: string;
 }
 
-function Radio({ value, ...rest }: RadioProps) {
+function Radio({
+  activeBackgroundColor,
+  value,
+  children,
+  style,
+  ...rest
+}: RadioProps) {
   const { isSelected, onPress } = useRadioProps({ value });
 
-  return <Container isSelected={isSelected} onPress={onPress} {...rest} />;
+  return (
+    <Container
+      isSelected={isSelected}
+      activeBackgroundColor={activeBackgroundColor}
+      style={style}
+    >
+      <Button onPress={onPress} {...rest}>
+        {children}
+      </Button>
+    </Container>
+  );
 }
 
 interface RadioIconProps {
