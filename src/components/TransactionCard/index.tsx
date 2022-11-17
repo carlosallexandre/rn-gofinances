@@ -1,3 +1,4 @@
+import { categories } from "../../utils/categories";
 import {
   Container,
   Title,
@@ -15,19 +16,19 @@ interface Category {
 }
 
 interface Props {
-  data: {
-    type: "income" | "outcome";
-    title: string;
-    amount: string;
-    category: Category;
-    date: string;
-  };
+  type: "income" | "outcome";
+  name: string;
+  amount: string;
+  category: string;
+  date: string;
 }
 
-export function TransactionCard({ data }: Props) {
+export function TransactionCard(data: Props) {
+  const category = categories.find((c) => c.key === data.category);
+
   return (
     <Container>
-      <Title>{data.title}</Title>
+      <Title>{data.name}</Title>
 
       <Amount type={data.type}>
         {data.type === "outcome" && "- "}
@@ -36,8 +37,8 @@ export function TransactionCard({ data }: Props) {
 
       <Footer>
         <Category>
-          <CategoryIcon name={data.category.icon} />
-          <CategoryName>{data.category.name}</CategoryName>
+          <CategoryIcon name={category?.icon} />
+          <CategoryName>{category?.name}</CategoryName>
         </Category>
 
         <Date>{data.date}</Date>

@@ -1,8 +1,8 @@
-import { useContext } from "react";
-import { ThemeContext } from "styled-components";
-import { useForm, FormProvider } from "react-hook-form";
+import { useTheme } from "styled-components";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm, FormProvider } from "react-hook-form";
+import { useNavigation } from "@react-navigation/native";
 
 import { Header } from "../../components/Header";
 import { Button } from "../../components/Form/Button";
@@ -15,7 +15,22 @@ import { categories } from "../../utils/categories";
 
 import { Container, Form, Fields, RadioContainer, Separator } from "./styles";
 import { Category } from "../../components/Category";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import { Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { useTransactions } from "../../contexts/transactions.context";
+
+interface Category {
+  key: string;
+  name: string;
+  color: string;
+  icon: string;
+}
+
+interface NewTransactionData {
+  name: string;
+  amount: number;
+  type: "income" | "outcome";
+  category: Category;
+}
 
 const schema = yup.object().shape({
   name: yup.string().required("O nome é obrigatório"),
@@ -32,15 +47,30 @@ const schema = yup.object().shape({
 });
 
 export function Register() {
-  const theme = useContext(ThemeContext);
+  const theme = useTheme();
+  const navigation = useNavigation();
+  const { addTransaction } = useTransactions();
 
-  const methods = useForm({ resolver: yupResolver(schema) });
+  const methods = useForm<NewTransactionData>({
+    resolver: yupResolver(schema),
+  });
   const { handleSubmit, reset } = methods;
 
-  function onSubmit(data: any) {
-    console.log(data);
-    reset();
-    Keyboard.dismiss();
+  async function onSubmit(data: NewTransactionData) {
+    try {
+      await addTransaction({
+        name: data.name,
+        amount: data.amount,
+        type: data.type,
+        category: data.category.key,
+      });
+
+      reset();
+      // @ts-ignore
+      navigation.navigate("Listagem");
+    } catch {
+      Alert.alert("Não foi possível salvar a transação.");
+    }
   }
 
   return (
